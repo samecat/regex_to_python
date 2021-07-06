@@ -1,0 +1,6 @@
+No Mercy - Ignore	^.* [ AM]		Ignore	<Mercy>	Ignored	
+ABCD STATUS ALL - Ironclad/Halcyon	 [*C]+\s+INFO EFG ABCD STATUS      EFG IP ADDRESS: (?<pcf>.*)      ABCD STATUS: ALL (?<status>(\w|-)*)	EFG '+pcf+' ABCD All Status '+status	iif(status='IS','C','S')	<Mercy>		Automatic Halcyon
+INFO CGA - Ironclad	 (?<action>[*CA]+)\s+INFO\s+CGA      (?<ds1>[A-Z0-9-=]+)\s+(?<status>\w+)\s+((TG )?(?<stemgroup>\d+)[, ]+(?<stems>\d+-\d+)|(?<nontg>.*))	CGA '+iif(stemgroup<>'','Stem Group '+stemgroup,nontg)	iif(action='A','C','S')	<Mercy>		Automatic Halcyon
+OP OVRLD - Ironclad/Halcyon	 (?<sev>[*CA]+)\s+OP\s+OVRLD\s+(?<msg>.*)	Overload '+msg	iif(sev='A','C','S')	<Mercy>		Automatic Halcyon
+INFO SERV XYZGRP ELINK - Ironclad/Halcyon	 [*CA]+\s+INFO SERV XYZGRP=(?<xyzgrp>[0-9-]+) ELINK (?<status>UP|DOWN)	SERV XYZGRP '+xyzgrp+' Elink Down'	iif(status='UP','C','S')	<Mercy>		Automatic Halcyon
+AMX DHM FAILED - Ironclad	 [**]+\s+AMX DHM\s+(?<dhm>\d+)\s+(?<msg>.*)	AMX DHM ' + DHM + '  ' + msg	Ironclad	<Mercy>	Halcyoned after 48 hours	Timeout Halcyon

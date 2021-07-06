@@ -1,0 +1,88 @@
+Processing Input File: .\sample_input.txt
+### Start of Output
+        if not matchedYet:
+            match = re.search(r'^.* [ AM]', data)
+            if match :
+                attrs['LINE_NAME'] = 'No Mercy - Ignore'
+                attrs['ITEM_TEXT'] = ''
+                attrs['ACTION'] = 'Ignore'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = ''
+                matchedYet = True
+        if not matchedYet:
+            match = re.search(r'[*C]+\s+INFO EFG ABCD STATUS      EFG IP ADDRESS: (?P<pcf>.*)      ABCD STATUS: ALL (?P<status>(\w|-)*)', data)
+            if match :
+                # 2 rd fields
+                if match.group('pcf') is not None: rd_fields['pcf'] = match.group('pcf').strip()
+                if match.group('status') is not None: rd_fields['status'] = match.group('status').strip()
+                attrs['LINE_NAME'] = 'ABCD STATUS ALL - Ironclad/Halcyon'
+                attrs['ITEM_TEXT'] = 'EFG ' + rd_fields['pcf'] + ' ABCD All Status ' + rd_fields['status']
+                if rd_fields['status'] == 'IS' :
+                    attrs['ACTION'] = 'Halcyon'
+                else:
+                    attrs['ACTION'] = 'Ironclad'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = 'Automatic Halcyon'
+                matchedYet = True
+        if not matchedYet:
+            match = re.search(r'(?P<action>[*CA]+)\s+INFO\s+CGA      (?P<ds1>[A-Z0-9-=]+)\s+(?P<status>\w+)\s+((TG )?(?P<stemgroup>\d+)[, ]+(?P<stems>\d+-\d+)|(?P<nontg>.*))', data)
+            if match :
+                # 6 rd fields
+                if match.group('action') is not None: rd_fields['action'] = match.group('action').strip()
+                if match.group('ds1') is not None: rd_fields['ds1'] = match.group('ds1').strip()
+                if match.group('status') is not None: rd_fields['status'] = match.group('status').strip()
+                if match.group('stemgroup') is not None: rd_fields['stemgroup'] = match.group('stemgroup').strip()
+                if match.group('stems') is not None: rd_fields['stems'] = match.group('stems').strip()
+                if match.group('nontg') is not None: rd_fields['nontg'] = match.group('nontg').strip()
+                attrs['LINE_NAME'] = 'INFO CGA - Ironclad'
+                attrs['ITEM_TEXT'] = '' #TBD# NEEDS MANUAL WORK #TBD#
+                if rd_fields['action'] == 'A' :
+                    attrs['ACTION'] = 'Halcyon'
+                else:
+                    attrs['ACTION'] = 'Ironclad'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = 'Automatic Halcyon'
+                matchedYet = True
+        if not matchedYet:
+            match = re.search(r'(?P<sev>[*CA]+)\s+OP\s+OVRLD\s+(?P<msg>.*)', data)
+            if match :
+                # 2 rd fields
+                if match.group('sev') is not None: rd_fields['sev'] = match.group('sev').strip()
+                if match.group('msg') is not None: rd_fields['msg'] = match.group('msg').strip()
+                attrs['LINE_NAME'] = 'OP OVRLD - Ironclad/Halcyon'
+                attrs['ITEM_TEXT'] = 'Overload ' + rd_fields['msg']
+                if rd_fields['sev'] == 'A' :
+                    attrs['ACTION'] = 'Halcyon'
+                else:
+                    attrs['ACTION'] = 'Ironclad'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = 'Automatic Halcyon'
+                matchedYet = True
+        if not matchedYet:
+            match = re.search(r'[*CA]+\s+INFO SERV XYZGRP=(?P<xyzgrp>[0-9-]+) ELINK (?P<status>UP|DOWN)', data)
+            if match :
+                # 2 rd fields
+                if match.group('xyzgrp') is not None: rd_fields['xyzgrp'] = match.group('xyzgrp').strip()
+                if match.group('status') is not None: rd_fields['status'] = match.group('status').strip()
+                attrs['LINE_NAME'] = 'INFO SERV XYZGRP ELINK - Ironclad/Halcyon'
+                attrs['ITEM_TEXT'] = 'SERV XYZGRP ' + rd_fields['xyzgrp'] + ' Elink Down'
+                if rd_fields['status'] == 'UP' :
+                    attrs['ACTION'] = 'Halcyon'
+                else:
+                    attrs['ACTION'] = 'Ironclad'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = 'Automatic Halcyon'
+                matchedYet = True
+        if not matchedYet:
+            match = re.search(r'[**]+\s+AMX DHM\s+(?P<dhm>\d+)\s+(?P<msg>.*)', data)
+            if match :
+                # 2 rd fields
+                if match.group('dhm') is not None: rd_fields['dhm'] = match.group('dhm').strip()
+                if match.group('msg') is not None: rd_fields['msg'] = match.group('msg').strip()
+                attrs['LINE_NAME'] = 'AMX DHM FAILED - Ironclad'
+                attrs['ITEM_TEXT'] = 'AMX DHM ' + rd_fields['dhm'] + '  ' + rd_fields['msg']
+                attrs['ACTION'] = 'Ironclad'
+                attrs['MERCY_EXPRESSION'] = rd_fields['mercy']
+                attrs['OPERATION_TYPE'] = 'Timeout Halcyon'
+                matchedYet = True
+### End of Output
